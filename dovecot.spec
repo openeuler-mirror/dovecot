@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.3
-Release:       4
+Release:       5
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2
 URL:           http://www.dovecot.org/
@@ -28,6 +28,8 @@ Patch6005:     CVE-2019-10691.patch
 Patch6006:     CVE-2019-11494-1.patch
 Patch6007:     CVE-2019-11494-2.patch
 Patch6008:     CVE-2019-11499.patch
+Patch6009:     CVE-2015-3420.patch
+Patch6010:     CVE-2016-8652.patch
 
 BuildRequires: gcc-c++ openssl-devel pam-devel zlib-devel bzip2-devel libcap-devel
 BuildRequires: libtool autoconf automake pkgconfig sqlite-devel libpq-devel
@@ -278,5 +280,11 @@ make check
 
 
 %changelog
+* Sun Mar 16 2020 gulining<gulining1@huawei.com> - 2.3.3-5
+- Type:cves
+- ID:CVE-2015-3420 CVE-2016-8652
+- SUG:restart
+- DESC:fix CVE-2015-3420 CVE-2016-8652
+
 * Mon Dec 2 2019 wangzhishun <wangzhishun1@huawei.com> - 2.3.3-4
 - Package init
