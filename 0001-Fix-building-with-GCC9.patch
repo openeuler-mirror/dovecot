@@ -1,0 +1,48 @@
+From cddc8f4bc21e2fc92b2570d24129d1c0bacd1cce Mon Sep 17 00:00:00 2001
+From: lyn1001 <thistleslyn@163.com>
+Date: Wed, 27 May 2020 14:50:08 +0800
+Subject: [PATCH] Fix building with GCC9
+
+---
+ dovecot-2.3.3/src/lib-smtp/smtp-address.c | 10 ++++++++++
+ dovecot-2.3.3/src/lib-smtp/smtp-address.h |  3 +--
+ 2 files changed, 11 insertions(+), 2 deletions(-)
+
+diff --git a/src/lib-smtp/smtp-address.c b/src/lib-smtp/smtp-address.c
+index bb31d34..9bb5313 100644
+--- a/src/lib-smtp/smtp-address.c
++++ b/src/lib-smtp/smtp-address.c
+@@ -297,6 +297,16 @@ smtp_parse_username(struct smtp_address_parser *aparser)
+ 	return ret;
+ }
+ 
++struct smtp_address *SMTP_ADDRESS_LITERAL(const char *localpart,const char *domain)
++{
++	static  struct smtp_address sa;
++
++	sa.localpart = localpart;
++	sa.domain = domain;
++
++	return &sa;
++}
++
+ int smtp_address_parse_mailbox(pool_t pool,
+ 	const char *mailbox, enum smtp_address_parse_flags flags,
+ 	struct smtp_address **address_r, const char **error_r)
+diff --git a/src/lib-smtp/smtp-address.h b/src/lib-smtp/smtp-address.h
+index 2556e4f..8828e01 100644
+--- a/src/lib-smtp/smtp-address.h
++++ b/src/lib-smtp/smtp-address.h
+@@ -25,8 +25,7 @@ ARRAY_DEFINE_TYPE(smtp_address, struct smtp_address *);
+ ARRAY_DEFINE_TYPE(smtp_address_const, const struct smtp_address *);
+ 
+ /* Not const! Never return this as a result directly! */
+-#define SMTP_ADDRESS_LITERAL(localpart, domain) \
+-	&((struct smtp_address){ (localpart), (domain) })
++struct smtp_address *SMTP_ADDRESS_LITERAL(const char *localpart,const char *domain);
+ 
+ /*
+  * SMTP address parsing
+-- 
+2.23.0
+
