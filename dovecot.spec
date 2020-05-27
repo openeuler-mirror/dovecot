@@ -19,7 +19,7 @@ Source9:       dovecot.sysconfig
 Source10:      dovecot.tmpfilesd
 
 Patch0001:     dovecot-2.3.0.1-libxcrypt.patch
-Patch0002:     0001-Fix-building-with-GCC9.patch
+Patch0002:     Fix-building-with-GCC9.patch
 Patch6000:     CVE-2019-7524.patch
 Patch6001:     CVE-2019-3814-1.patch
 Patch6002:     CVE-2019-3814-2.patch
