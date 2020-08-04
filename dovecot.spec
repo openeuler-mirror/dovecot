@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.10.1
-Release:       1
+Release:       2
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2
 URL:           http://www.dovecot.org/
@@ -280,7 +280,10 @@ make check
 
 
 %changelog
-* Sat Aug 1 wangyue <wangyue92@huawei.com> - 2.3.10.1
+* Tue Aug 4 2020 wangyue <wangyue92@huawei.com> - 2.3.10.1-2
+- fix changelog
+
+* Sat Aug 1 2020 wangyue <wangyue92@huawei.com> - 2.3.10.1-1
 - Upgrade to 2.3.10.1 to fix CVE-2020-10967, CVE-2020-10958, CVE-2020-10957
 
 * Thu May 21 2020 yanan li <liyanan032@huawei.com> - 2.3.3-6
