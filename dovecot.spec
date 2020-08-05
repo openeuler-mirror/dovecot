@@ -5,8 +5,8 @@
 %global _hardened_build 1
 
 Name:          dovecot
-Version:       2.3.3
-Release:       5
+Version:       2.3.10.1
+Release:       1
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2
 URL:           http://www.dovecot.org/
@@ -14,22 +14,22 @@ Epoch:         1
 
 Source:        http://www.dovecot.org/releases/2.3/%{name}-%{version}%{?prever}.tar.gz
 Source2:       dovecot.pam
-Source8:       http://pigeonhole.dovecot.org/releases/2.3/dovecot-2.3-pigeonhole-0.5.3.tar.gz
+%global        pigeonholever 0.5.10
+Source8:       http://pigeonhole.dovecot.org/releases/2.3/dovecot-2.3-pigeonhole-%{pigeonholever}.tar.gz
 Source9:       dovecot.sysconfig
 Source10:      dovecot.tmpfilesd
 
-Patch0001:     dovecot-2.3.0.1-libxcrypt.patch
-Patch6000:     CVE-2019-7524.patch
-Patch6001:     CVE-2019-3814-1.patch
-Patch6002:     CVE-2019-3814-2.patch
-Patch6003:     CVE-2019-3814-3.patch
-Patch6004:     CVE-2019-7524-1.patch
-Patch6005:     CVE-2019-10691.patch
-Patch6006:     CVE-2019-11494-1.patch
-Patch6007:     CVE-2019-11494-2.patch
-Patch6008:     CVE-2019-11499.patch
-Patch6009:     CVE-2015-3420.patch
-Patch6010:     CVE-2016-8652.patch
+Patch6000:     CVE-2015-3420.patch
+Patch6001:     CVE-2016-8652.patch
+Patch6002:     dovecot-2.0-defaultconfig.patch
+Patch6003:     dovecot-1.0.beta2-mkcert-permissions.patch
+Patch6004:     dovecot-1.0.rc7-mkcert-paths.patch
+
+#wait for network
+Patch6005:     dovecot-2.1.10-waitonline.patch
+
+Patch6006:     dovecot-2.2.20-initbysystemd.patch
+Patch6007:     dovecot-2.2.22-systemd_w_protectsystem.patch
 
 BuildRequires: gcc-c++ openssl-devel pam-devel zlib-devel bzip2-devel libcap-devel
 BuildRequires: libtool autoconf automake pkgconfig sqlite-devel libpq-devel
@@ -70,7 +70,7 @@ Man pages and other related help documents for %{name}.
 sed -i '/DEFAULT_INCLUDES *=/s|$| '"$(pkg-config --cflags libclucene-core)|" src/plugins/fts-lucene/Makefile.in
 
 %build
-export CFLAGS="%{__global_cflags} -fno-strict-aliasing" LDFLAGS="-Wl,-z,now -Wl,-z,relro %{?__global_ldflags}"
+export CFLAGS="%{__global_cflags} -fno-strict-aliasing -fstack-reuse=none" LDFLAGS="-Wl,-z,now -Wl,-z,relro %{?__global_ldflags}"
 
 mkdir -p m4
 autoreconf -I . -fiv #required for aarch64 support
@@ -85,7 +85,7 @@ sed -i 's|/etc/ssl|/etc/pki/dovecot|' doc/mkcert.sh doc/example-config/conf.d/10
 
 %make_build
 
-cd dovecot-2*3-pigeonhole-0.5.3
+cd dovecot-2*3-pigeonhole-%{pigeonholever}
 
 [ -f configure ] || autoreconf -fiv
 [ -f ChangeLog ] || echo "Pigeonhole ChangeLog is not available, yet" >ChangeLog
@@ -100,7 +100,7 @@ cd -
 %make_install
 mv $RPM_BUILD_ROOT/%{_docdir}/%{name} %{_builddir}/%{name}-%{version}%{?prever}/docinstall
 
-cd dovecot-2*3-pigeonhole-0.5.3
+cd dovecot-2*3-pigeonhole-%{pigeonholever}
 %make_install
 
 mv $RPM_BUILD_ROOT/%{_docdir}/%{name} $RPM_BUILD_ROOT/%{_docdir}/%{name}-pigeonhole
@@ -191,17 +191,17 @@ fi
 
 %check
 make check
-cd dovecot-2*3-pigeonhole-0.5.3
+cd dovecot-2*3-pigeonhole-%{pigeonholever}
 make check
 
 %files
 %doc docinstall/* AUTHORS ChangeLog COPYING COPYING.LGPL COPYING.MIT NEWS README
 %{_sbindir}/dovecot
 
-%{_bindir}/{doveadm,doveconf,dsync}
+%{_bindir}/{doveadm,doveconf,dsync,dovecot-sysreport}
 
 %_tmpfilesdir/dovecot.conf
-%{_unitdir}/{dovecot.service,dovecot.socket}
+%{_unitdir}/{dovecot.service,dovecot.socket,dovecot-init.service}
 
 %dir %{_sysconfdir}/dovecot
 %dir %{_sysconfdir}/dovecot/conf.d
@@ -280,6 +280,12 @@ make check
 
 
 %changelog
+* Wed Aug 5 2020 wangyue <wangyue92@huawei.com> - 2.3.10.1-1
+- Upgrade to 2.3.10.1 to fix CVE-2020-10967, CVE-2020-10958, CVE-2020-10957
+
+* Thu May 21 2020 yanan li <liyanan032@huawei.com> - 2.3.3-6
+- Fix building with GCC9.
+
 * Sun Mar 16 2020 gulining<gulining1@huawei.com> - 2.3.3-5
 - Type:cves
 - ID:CVE-2015-3420 CVE-2016-8652
