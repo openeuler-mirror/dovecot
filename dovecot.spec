@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.10.1
-Release:       2
+Release:       3
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2
 URL:           http://www.dovecot.org/
@@ -18,6 +18,7 @@ Source2:       dovecot.pam
 Source8:       http://pigeonhole.dovecot.org/releases/2.3/dovecot-2.3-pigeonhole-%{pigeonholever}.tar.gz
 Source9:       dovecot.sysconfig
 Source10:      dovecot.tmpfilesd
+Source11:      https://raw.githubusercontent.com/QMailToaster/dovecot/master/dovecot.prestartscript
 
 Patch6000:     CVE-2015-3420.patch
 Patch6001:     CVE-2016-8652.patch
@@ -113,6 +114,7 @@ install -m 644 AUTHORS ChangeLog COPYING COPYING.LGPL INSTALL NEWS README $RPM_B
 cd -
 
 install -p -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/dovecot
+install -p -D -m 755 %{SOURCE11} $RPM_BUILD_ROOT%{_libexecdir}/dovecot/prestartscript
 
 install -d $RPM_BUILD_ROOT%{ssldir}/certs
 install -d $RPM_BUILD_ROOT%{ssldir}/private
@@ -284,6 +286,9 @@ make check
 
 
 %changelog
+* Thu Nov 5 2020 Guoshuai Sun <sunguoshuai@huawei.com> - 2.3.10.1-3
+- Add prestartscript from github
+
 * Tue Oct 27 2020 wangyue <wangyue92@huawei.com> - 2.3.10.1-2
 - Fix CVE-2020-12673 CVE-2020-12674 CVE-2020-12100
 
