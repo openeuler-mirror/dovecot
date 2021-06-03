@@ -1,0 +1,30 @@
+From 7039d1c3bc054142eb4034b88df150fda1eb75e4 Mon Sep 17 00:00:00 2001
+From: maminjie <maminjie1@huawei.com>
+Date: Thu, 3 Jun 2021 16:48:55 +0800
+Subject: [PATCH] Fix writing BODYSTRUCTURE for truncated multipart/digest part
+
+reference:
+https://github.com/dovecot/core/commit/84cde48e5859b1d20f2fd98b57b7410b4d3727fa
+https://github.com/dovecot/core/commit/0f66865e0e3dae3e902abd8bb559d7706dbff437
+---
+ src/lib-imap/imap-bodystructure.c | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/lib-imap/imap-bodystructure.c b/src/lib-imap/imap-bodystructure.c
+index 07bd5a4..81ce529 100644
+--- a/src/lib-imap/imap-bodystructure.c
++++ b/src/lib-imap/imap-bodystructure.c
+@@ -164,6 +164,10 @@ static void part_write_body(const struct message_part *part,
+ 			str_append_c(str, ' ');
+ 			imap_append_string(str, data->content_subtype);
+ 		}
++        bool part_is_text = (part->flags & MESSAGE_PART_FLAG_TEXT) != 0;
++        if (text != part_is_text) {
++            return;
++        }
+ 	}
+ 
+ 	/* ("content type param key" "value" ...) */
+-- 
+2.23.0
+
