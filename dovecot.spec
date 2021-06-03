@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.10.1
-Release:       6
+Release:       7
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
@@ -40,6 +40,8 @@ Patch6013:     CVE-2020-25275-2.patch
 Patch6014:     CVE-2020-24386.patch
 Patch6015:     0001-Fix-bugs-in-smtp-server.patch
 Patch6016:     0002-Fix-assert-crash-if-parsing-invalid-BODYSTRUCTURE.patch
+Patch6017:     0003-Handle-empty-lists-in-IMAP-BODYSTRUCTURE-parsing-as-invalid.patch
+Patch6018:     0004-Fix-writing-BODYSTRUCTURE-for-truncated-multipart-digest-part.patch
 
 BuildRequires: gcc-c++ openssl-devel pam-devel zlib-devel bzip2-devel libcap-devel
 BuildRequires: libtool autoconf automake pkgconfig sqlite-devel libpq-devel
@@ -291,6 +293,9 @@ make check
 
 
 %changelog
+* Thu Jun 03 2021 maminjie <maminjie1@huawei.com> - 2.3.10.1-7
+- backport some patches about imap-bodystructure
+
 * Sat Mar 27 2021 maminjie <maminjie1@huawei.com> - 2.3.10.1-6
 - Resolve fuzz-test about ABRT error
 
