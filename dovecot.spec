@@ -5,23 +5,23 @@
 %global _hardened_build 1
 
 Name:          dovecot
-Version:       2.3.10.1
-Release:       7
+Version:       2.3.15
+Release:       1
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
 Epoch:         1
 
-Source:        http://www.dovecot.org/releases/2.3/%{name}-%{version}%{?prever}.tar.gz
+Source:        http://www.dovecot.org/releases/2.3/%{name}-%{version}.tar.gz
+Source1:       dovecot.init
 Source2:       dovecot.pam
-%global        pigeonholever 0.5.10
+%global        pigeonholever 0.5.15
 Source8:       http://pigeonhole.dovecot.org/releases/2.3/dovecot-2.3-pigeonhole-%{pigeonholever}.tar.gz
 Source9:       dovecot.sysconfig
 Source10:      dovecot.tmpfilesd
-Source11:      https://raw.githubusercontent.com/QMailToaster/dovecot/master/dovecot.prestartscript
+Source11:      prestartscript
+Source12:      dovecot.conf.5
 
-Patch6000:     CVE-2015-3420.patch
-Patch6001:     CVE-2016-8652.patch
 Patch6002:     dovecot-2.0-defaultconfig.patch
 Patch6003:     dovecot-1.0.beta2-mkcert-permissions.patch
 Patch6004:     dovecot-1.0.rc7-mkcert-paths.patch
@@ -31,22 +31,17 @@ Patch6005:     dovecot-2.1.10-waitonline.patch
 
 Patch6006:     dovecot-2.2.20-initbysystemd.patch
 Patch6007:     dovecot-2.2.22-systemd_w_protectsystem.patch
-Patch6008:     CVE-2020-12673.patch
-Patch6009:     CVE-2020-12674.patch
-Patch6010:     CVE-2020-12100-1.patch
-Patch6011:     CVE-2020-12100-2.patch
-Patch6012:     CVE-2020-25275-1.patch
-Patch6013:     CVE-2020-25275-2.patch
-Patch6014:     CVE-2020-24386.patch
-Patch6015:     0001-Fix-bugs-in-smtp-server.patch
-Patch6016:     0002-Fix-assert-crash-if-parsing-invalid-BODYSTRUCTURE.patch
-Patch6017:     0003-Handle-empty-lists-in-IMAP-BODYSTRUCTURE-parsing-as-invalid.patch
-Patch6018:     0004-Fix-writing-BODYSTRUCTURE-for-truncated-multipart-digest-part.patch
+Patch6009:     dovecot-2.3.11-bigkey.patch
+Patch6010:     dovecot-2.3.6-opensslhmac.patch
+Patch6011:     dovecot-2.3.15-fixvalcond.patch
+Patch6012:     dovecot-2.3.15-valbasherr.patch
 
 BuildRequires: gcc-c++ openssl-devel pam-devel zlib-devel bzip2-devel libcap-devel
 BuildRequires: libtool autoconf automake pkgconfig sqlite-devel libpq-devel
 BuildRequires: mariadb-connector-c-devel libxcrypt-devel openldap-devel krb5-devel
 BuildRequires: quota-devel xz-devel gettext-devel clucene-core-devel libcurl-devel expat-devel
+BuildRequires: lz4-devel libzstd-devel libicu-devel libstemmer-devel multilib-rpm-config
+BuildRequires: systemd-devel
 
 Requires: openssl >= 0.9.7f-4 systemd
 Requires(pre): shadow-utils
@@ -77,7 +72,7 @@ Man pages and other related help documents for %{name}.
 
 
 %prep
-%autosetup -n %{name}-%{version}%{?prever} -a 8 -p1
+%autosetup -n %{name}-%{version} -a 8 -p1
 
 sed -i '/DEFAULT_INCLUDES *=/s|$| '"$(pkg-config --cflags libclucene-core)|" src/plugins/fts-lucene/Makefile.in
 
@@ -121,6 +116,7 @@ install -m 644 AUTHORS ChangeLog COPYING COPYING.LGPL INSTALL NEWS README $RPM_B
 cd -
 
 install -p -D -m 644 %{SOURCE2} $RPM_BUILD_ROOT%{_sysconfdir}/pam.d/dovecot
+install -p -D -m 644 %{SOURCE12} $RPM_BUILD_ROOT%{_mandir}/man5/dovecot.conf.5
 install -p -D -m 755 %{SOURCE11} $RPM_BUILD_ROOT%{_libexecdir}/dovecot/prestartscript
 
 install -d $RPM_BUILD_ROOT%{ssldir}/certs
@@ -226,6 +222,7 @@ make check
 %config(noreplace) %{_sysconfdir}/dovecot/conf.d/{auth-deny.conf.ext,auth-dict.conf.ext,auth-ldap.conf.ext}
 %config(noreplace) %{_sysconfdir}/dovecot/conf.d/{auth-master.conf.ext,auth-passwdfile.conf.ext,auth-sql.conf.ext}
 %config(noreplace) %{_sysconfdir}/dovecot/conf.d/{auth-static.conf.ext,auth-system.conf.ext,auth-vpopmail.conf.ext}
+%config(noreplace) %{_sysconfdir}/dovecot/conf.d/10-metrics.conf
 
 %config(noreplace) %{_sysconfdir}/pam.d/dovecot
 %config(noreplace) %{ssldir}/dovecot-openssl.cnf
@@ -242,7 +239,7 @@ make check
 %exclude %{_libdir}/dovecot/doveadm/*sieve*
 %{_libdir}/dovecot/*.so.*
 %{_libdir}/dovecot/*_plugin.so
-%exclude %{_libdir}/dovecot/*_sieve_plugin.so
+%{_libdir}/dovecot/*_sieve_plugin.so
 %{_libdir}/dovecot/auth/{lib20_auth_var_expand_crypt.so,libauthdb_imap.so,libauthdb_ldap.so}
 %{_libdir}/dovecot/auth/{libmech_gssapi.so,libdriver_sqlite.so}
 %{_libdir}/dovecot/dict/{libdriver_sqlite.so,libdict_ldap.so}
@@ -288,11 +285,15 @@ make check
 
 %files help
 %{_mandir}/man1/*
+%{_mandir}/man5/dovecot.conf.5*
 %{_mandir}/man7/doveadm-search-query.7*
 %{_mandir}/man7/pigeonhole.7*
 
 
 %changelog
+* Thu Jul 08 2021 wutao <wutao61@huawei.com> - 2.3.15-1
+- upgrade to 2.3.15
+
 * Thu Jun 03 2021 maminjie <maminjie1@huawei.com> - 2.3.10.1-7
 - backport some patches about imap-bodystructure
 
