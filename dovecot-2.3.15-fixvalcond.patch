@@ -1,0 +1,24 @@
+diff -up dovecot-2.3.15/dovecot-2.3-pigeonhole-0.5.15/src/lib-sieve/storage/dict/sieve-dict-script.c.fixvalcond dovecot-2.3.15/dovecot-2.3-pigeonhole-0.5.15/src/lib-sieve/storage/dict/sieve-dict-script.c
+--- dovecot-2.3.15/dovecot-2.3-pigeonhole-0.5.15/src/lib-sieve/storage/dict/sieve-dict-script.c.fixvalcond	2021-06-21 23:07:55.269814896 +0200
++++ dovecot-2.3.15/dovecot-2.3-pigeonhole-0.5.15/src/lib-sieve/storage/dict/sieve-dict-script.c	2021-06-21 23:07:55.298814544 +0200
+@@ -109,7 +109,7 @@ static int sieve_dict_script_get_stream
+ {
+ 	struct sieve_dict_script *dscript =
+ 		(struct sieve_dict_script *)script;
+-	const char *path, *name = script->name, *data, *error;
++	const char *path, *name = script->name, *data, *error = NULL;
+ 	int ret;
+ 
+ 	dscript->data_pool =
+diff -up dovecot-2.3.15/src/lib-storage/index/index-attribute.c.fixvalcond dovecot-2.3.15/src/lib-storage/index/index-attribute.c
+--- dovecot-2.3.15/src/lib-storage/index/index-attribute.c.fixvalcond	2021-06-14 15:40:37.000000000 +0200
++++ dovecot-2.3.15/src/lib-storage/index/index-attribute.c	2021-06-21 21:52:22.963171229 +0200
+@@ -249,7 +249,7 @@ int index_storage_attribute_get(struct m
+ 				struct mail_attribute_value *value_r)
+ {
+ 	struct dict *dict;
+-	const char *mailbox_prefix, *error;
++	const char *mailbox_prefix, *error = NULL;
+ 	int ret;
+ 
+ 	i_zero(value_r);
