@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.15
-Release:       1
+Release:       2
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
@@ -44,6 +44,7 @@ BuildRequires: lz4-devel libzstd-devel libicu-devel libstemmer-devel multilib-rp
 BuildRequires: systemd-devel
 
 Requires: openssl >= 0.9.7f-4 systemd
+Requires: %{name}-help
 Requires(pre): shadow-utils
 Requires(post): systemd-units
 Requires(preun): systemd-units
@@ -230,8 +231,8 @@ make check
 %dir %{ssldir}
 %dir %{ssldir}/certs
 %dir %{ssldir}/private
-%attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) %{ssldir}/certs/dovecot.pem
-%attr(0600,root,root) %ghost %config(missingok,noreplace) %verify(not md5 size mtime) %{ssldir}/private/dovecot.pem
+%attr(0600,root,root) %config(missingok, noreplace) %verify(not md5 size mtime) %{ssldir}/certs/dovecot.pem
+%attr(0600,root,root) %config(missingok, noreplace) %verify(not md5 size mtime) %{ssldir}/private/dovecot.pem
 
 %dir %{_libdir}/dovecot
 %dir %{_libdir}/dovecot/{auth,dict}
@@ -290,6 +291,9 @@ make check
 %{_mandir}/man7/pigeonhole.7*
 
 %changelog
+* Thu Sep 16 2021 caodongxia <caodongxia@huawei.com> - 2.3.15-2
+- add install require help package
+
 * Fri Jul 09 2021 wutao <wutao61@huawei.com> - 2.3.15-1
 - upgrade to 2.3.15 to fix CVE
 
