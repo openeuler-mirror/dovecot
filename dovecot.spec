@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.15
-Release:       2
+Release:       3
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
@@ -49,6 +49,7 @@ Requires(pre): shadow-utils
 Requires(post): systemd-units
 Requires(preun): systemd-units
 Requires(postun): systemd-units
+Requires: tar
 
 Provides:     %{name}-pigeonhole = 1:%{version}-%{release} %{name}-pgsql = 1:%{version}-%{release}
 Obsoletes:    %{name}-pigeonhole < 1:%{version}-%{release} %{name}-pgsql < 1:%{version}-%{release}
@@ -291,6 +292,9 @@ make check
 %{_mandir}/man7/pigeonhole.7*
 
 %changelog
+* Tue Nov 30 2021 xu_ping <xuping33@huawei.com> - 2.3.15-3
+- add requires tar to fix tar command not found
+
 * Thu Sep 16 2021 caodongxia <caodongxia@huawei.com> - 2.3.15-2
 - add install require help package
 
