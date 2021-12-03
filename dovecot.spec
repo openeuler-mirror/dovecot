@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.15
-Release:       2
+Release:       3
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
@@ -41,7 +41,7 @@ BuildRequires: libtool autoconf automake pkgconfig sqlite-devel libpq-devel
 BuildRequires: mariadb-connector-c-devel libxcrypt-devel openldap-devel krb5-devel
 BuildRequires: quota-devel xz-devel gettext-devel clucene-core-devel libcurl-devel expat-devel
 BuildRequires: lz4-devel libzstd-devel libicu-devel libstemmer-devel multilib-rpm-config
-BuildRequires: systemd-devel
+BuildRequires: systemd-devel chrpath
 
 Requires: openssl >= 0.9.7f-4 systemd
 Requires: %{name}-help
@@ -150,6 +150,15 @@ cd docinstall
 rm -f securecoding.txt thread-refs.txt
 cd -
 
+cd  $RPM_BUILD_ROOT/usr
+file `find -type f`| grep -w ELF | awk -F":" '{print $1}' | for i in `xargs`
+do
+  chrpath -d $i
+done
+cd -
+mkdir -p  $RPM_BUILD_ROOT/etc/ld.so.conf.d
+echo "%{_libdir}/%{name}" > $RPM_BUILD_ROOT/etc/ld.so.conf.d/%{name}-%{_arch}.conf
+echo "%{_libdir}/%{name}/old-stats" >> $RPM_BUILD_ROOT/etc/ld.so.conf.d/%{name}-%{_arch}.conf
 
 %pre
 getent group dovecot >/dev/null || groupadd -r --gid 97 dovecot
@@ -167,6 +176,7 @@ if [ "$1" = "2" ]; then
 fi
 
 %post
+/sbin/ldconfig
 if [ $1 -eq 1 ]; then
   %systemd_post dovecot.service
 fi
@@ -185,6 +195,7 @@ if [ $1 = 0 ]; then
 fi
 
 %postun
+/sbin/ldconfig
 /bin/systemctl daemon-reload >/dev/null 2>&1 || :
 
 
@@ -277,6 +288,8 @@ make check
 
 %exclude %{_sysconfdir}/dovecot/README
 
+%{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
+
 %files devel
 %{_includedir}/dovecot
 %{_datadir}/aclocal/dovecot*.m4
@@ -291,6 +304,9 @@ make check
 %{_mandir}/man7/pigeonhole.7*
 
 %changelog
+* Thu Dec 02 2021 lingsheng <lingsheng@huawei.com> - 2.3.15-3
+- Delete rpath setting
+
 * Thu Sep 16 2021 caodongxia <caodongxia@huawei.com> - 2.3.15-2
 - add install require help package
 
