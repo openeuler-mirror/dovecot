@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.15
-Release:       2
+Release:       3
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
@@ -156,8 +156,8 @@ do
 done
 cd -
 mkdir -p  $RPM_BUILD_ROOT/etc/ld.so.conf.d
-echo "%{_bindir}/%{name}" > $RPM_BUILD_ROOT/etc/ld.so.conf.d/%{name}-%{_arch}.conf
-echo "%{_libdir}/%{name}" >> $RPM_BUILD_ROOT/etc/ld.so.conf.d/%{name}-%{_arch}.conf
+echo "%{_libdir}/%{name}" > $RPM_BUILD_ROOT/etc/ld.so.conf.d/%{name}-%{_arch}.conf
+echo "%{_libdir}/%{name}/old-stats" >> $RPM_BUILD_ROOT/etc/ld.so.conf.d/%{name}-%{_arch}.conf
 
 %pre
 getent group dovecot >/dev/null || groupadd -r --gid 97 dovecot
@@ -287,7 +287,7 @@ make check
 
 %exclude %{_sysconfdir}/dovecot/README
 
-%config(noreplace) /etc/ld.so.conf.d/*
+%{_sysconfdir}/ld.so.conf.d/%{name}-%{_arch}.conf
 
 %files devel
 %{_includedir}/dovecot
@@ -304,6 +304,9 @@ make check
 
 
 %changelog
+* Thu Dec 02 2021 lingsheng <lingsheng@huawei.com> - 2.3.15-3
+- Fix ldconfig search path
+
 * Wed Sep 08 2021 chenchen <chen_aka_jan@163.com> - 2.3.15-2
 - del rpath from some binaries and bin
 
