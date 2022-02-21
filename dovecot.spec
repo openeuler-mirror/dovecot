@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.15
-Release:       3
+Release:       4
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
@@ -43,7 +43,7 @@ BuildRequires: quota-devel xz-devel gettext-devel clucene-core-devel libcurl-dev
 BuildRequires: lz4-devel libzstd-devel libicu-devel libstemmer-devel multilib-rpm-config
 BuildRequires: systemd-devel chrpath
 
-Requires: openssl >= 0.9.7f-4 systemd
+Requires: openssl >= 0.9.7f-4 systemd tar
 Requires(pre): shadow-utils
 Requires(post): systemd-units
 Requires(preun): systemd-units
@@ -304,6 +304,9 @@ make check
 
 
 %changelog
+* Mon Feb 21 2022 caodongxia <caodongxia@huawei.com> - 2.3.15-4
+- Add requires tar for dovecot-sysreport command
+
 * Thu Dec 02 2021 lingsheng <lingsheng@huawei.com> - 2.3.15-3
 - Fix ldconfig search path
 
