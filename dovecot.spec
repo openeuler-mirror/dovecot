@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.15
-Release:       4
+Release:       5
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
@@ -35,6 +35,8 @@ Patch6009:     dovecot-2.3.11-bigkey.patch
 Patch6010:     dovecot-2.3.6-opensslhmac.patch
 Patch6011:     dovecot-2.3.15-fixvalcond.patch
 Patch6012:     dovecot-2.3.15-valbasherr.patch
+# https://github.com/dovecot/core/commit/6d902507c24fca4f64e3e9bf7d79ae5a48281cd8
+Patch0013:     test-cpu-limit-remove-checking-for-CPU-usage-upper-limit.patch
 
 BuildRequires: gcc-c++ openssl-devel pam-devel zlib-devel bzip2-devel libcap-devel
 BuildRequires: libtool autoconf automake pkgconfig sqlite-devel libpq-devel
@@ -304,6 +306,9 @@ make check
 
 
 %changelog
+* Wed Aug 10 2022 yaoxin <yaoxin30@ha-partners.com> - 1:2.3.15-5
+- Fix build failure
+
 * Mon Feb 21 2022 caodongxia <caodongxia@huawei.com> - 2.3.15-4
 - Add requires tar for dovecot-sysreport command
 
