@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.15
-Release:       4
+Release:       5
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
@@ -35,6 +35,9 @@ Patch6009:     dovecot-2.3.11-bigkey.patch
 Patch6010:     dovecot-2.3.6-opensslhmac.patch
 Patch6011:     dovecot-2.3.15-fixvalcond.patch
 Patch6012:     dovecot-2.3.15-valbasherr.patch
+
+Patch6013:     CVE-2022-30550_1.patch
+Patch6014:     CVE-2022-30550_2.patch
 
 BuildRequires: gcc-c++ openssl-devel pam-devel zlib-devel bzip2-devel libcap-devel
 BuildRequires: libtool autoconf automake pkgconfig sqlite-devel libpq-devel
@@ -304,6 +307,9 @@ make check
 
 
 %changelog
+* Wed Sep 28 2022 jiangpeng <jiangpeng01@ncti-gba.cn> - 1:2.3.15-5
+- Fix CVE-2022-30550
+
 * Mon Feb 21 2022 caodongxia <caodongxia@huawei.com> - 2.3.15-4
 - Add requires tar for dovecot-sysreport command
 
@@ -340,7 +346,7 @@ make check
 * Thu May 21 2020 yanan li <liyanan032@huawei.com> - 2.3.3-6
 - Fix building with GCC9.
 
-* Sun Mar 16 2020 gulining<gulining1@huawei.com> - 2.3.3-5
+* Mon Mar 16 2020 gulining<gulining1@huawei.com> - 2.3.3-5
 - Type:cves
 - ID:CVE-2015-3420 CVE-2016-8652
 - SUG:restart
