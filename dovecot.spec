@@ -6,7 +6,7 @@
 
 Name:          dovecot
 Version:       2.3.15
-Release:       4
+Release:       5
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
@@ -22,19 +22,22 @@ Source10:      dovecot.tmpfilesd
 Source11:      prestartscript
 Source12:      dovecot.conf.5
 
-Patch6002:     dovecot-2.0-defaultconfig.patch
-Patch6003:     dovecot-1.0.beta2-mkcert-permissions.patch
-Patch6004:     dovecot-1.0.rc7-mkcert-paths.patch
+Patch0:        dovecot-2.0-defaultconfig.patch
+Patch1:        dovecot-1.0.beta2-mkcert-permissions.patch
+Patch2:        dovecot-1.0.rc7-mkcert-paths.patch
 
 #wait for network
-Patch6005:     dovecot-2.1.10-waitonline.patch
+Patch3:        dovecot-2.1.10-waitonline.patch
 
-Patch6006:     dovecot-2.2.20-initbysystemd.patch
-Patch6007:     dovecot-2.2.22-systemd_w_protectsystem.patch
-Patch6009:     dovecot-2.3.11-bigkey.patch
-Patch6010:     dovecot-2.3.6-opensslhmac.patch
-Patch6011:     dovecot-2.3.15-fixvalcond.patch
-Patch6012:     dovecot-2.3.15-valbasherr.patch
+Patch4:        dovecot-2.2.20-initbysystemd.patch
+Patch5:        dovecot-2.2.22-systemd_w_protectsystem.patch
+Patch6:        dovecot-2.3.11-bigkey.patch
+Patch7:        dovecot-2.3.6-opensslhmac.patch
+Patch8:        dovecot-2.3.15-fixvalcond.patch
+Patch9:        dovecot-2.3.15-valbasherr.patch
+
+Patch10:       CVE-2022-30550_1.patch
+Patch11:       CVE-2022-30550_2.patch
 
 BuildRequires: gcc-c++ openssl-devel pam-devel zlib-devel bzip2-devel libcap-devel
 BuildRequires: libtool autoconf automake pkgconfig sqlite-devel libpq-devel
@@ -305,6 +308,9 @@ make check
 %{_mandir}/man7/pigeonhole.7*
 
 %changelog
+* Wed Sep 28 2022 jiangpeng <jiangpeng01@ncti-gba.cn> - 1:2.3.15-5
+- Fix CVE-2022-30550
+
 * Thu Dec 02 2021 lingsheng <lingsheng@huawei.com> - 2.3.15-4
 - Delete rpath setting
 
