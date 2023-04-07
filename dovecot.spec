@@ -5,8 +5,8 @@
 %global _hardened_build 1
 
 Name:          dovecot
-Version:       2.3.15
-Release:       7
+Version:       2.3.20
+Release:       1
 Summary:       Dovecot Secure imap server
 License:       MIT and LGPLv2.1
 URL:           http://www.dovecot.org/
@@ -15,7 +15,7 @@ Epoch:         1
 Source:        http://www.dovecot.org/releases/2.3/%{name}-%{version}.tar.gz
 Source1:       dovecot.init
 Source2:       dovecot.pam
-%global        pigeonholever 0.5.15
+%global        pigeonholever 0.5.20
 Source8:       http://pigeonhole.dovecot.org/releases/2.3/dovecot-2.3-pigeonhole-%{pigeonholever}.tar.gz
 Source9:       dovecot.sysconfig
 Source10:      dovecot.tmpfilesd
@@ -35,8 +35,6 @@ Patch6:        dovecot-2.3.11-bigkey.patch
 Patch7:        dovecot-2.3.6-opensslhmac.patch
 Patch8:        dovecot-2.3.15-fixvalcond.patch
 Patch9:        dovecot-2.3.15-valbasherr.patch
-# https://github.com/dovecot/core/commit/6d902507c24fca4f64e3e9bf7d79ae5a48281cd8
-Patch10:       test-cpu-limit-remove-checking-for-CPU-usage-upper-limit.patch
 
 Patch11:       CVE-2022-30550_1.patch
 Patch12:       CVE-2022-30550_2.patch
@@ -79,6 +77,9 @@ Man pages and other related help documents for %{name}.
 
 %prep
 %autosetup -n %{name}-%{version} -a 8 -p1
+
+cp run-test-valgrind.supp dovecot-2.3-pigeonhole-%{pigeonholever}/
+echo "testsuite" >dovecot-2.3-pigeonhole-%{pigeonholever}/run-test-valgrind.exclude
 
 sed -i '/DEFAULT_INCLUDES *=/s|$| '"$(pkg-config --cflags libclucene-core)|" src/plugins/fts-lucene/Makefile.in
 
@@ -310,6 +311,9 @@ make check
 
 
 %changelog
+* Fri Apr 07 2023 yaoxin <yao_xin001@hoperun.com> - 1:2.3.20-1
+- Update to 2.3.20
+
 * Fri Feb 3 2023 liyanan <liyanan32@ha-partners.com> - 1:2.3.15-7
 - Fix build failure with opensslv3
 
